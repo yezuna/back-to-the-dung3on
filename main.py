@@ -37,39 +37,50 @@ def setTiles():
             level1x0y0
         """))
         mainPlayer.set_position(80, 100)
+# from start screen to dungeon
 
 def on_overlap_tile(sprite, location):
-    global level
+    global level, textSprite
     level += 1
     setTiles()
     pause(100)
-    game.splash("Level: " + ("" + str(level)))
+    scene.center_camera_at(0, 0)
+    textSprite = textsprite.create("Level: " + ("" + str(level)), 0, 2)
     pause(500)
 scene.on_overlap_tile(SpriteKind.player,
     sprites.castle.tile_dark_grass3,
     on_overlap_tile)
 
 def levelMapCheck():
-    if level == 1 and lvlmapy == -1:
+    global prevlocation
+    if level == 1 and lvlmapy == -1 and lvlmapx == 0:
         tiles.set_tilemap(tilemap("""
             level1x0y-1
         """))
         mainPlayer.set_position(80, 20)
-    elif level == 1 and lvlmapy == 0:
+    elif level == 1 and lvlmapy == 0 and lvlmapx == 0:
         tiles.set_tilemap(tilemap("""
             level1x0y0
         """))
-        mainPlayer.set_position(80, 110)
-    elif level == 1 and lvlmapx == 1:
+        if prevlocation == "x":
+            mainPlayer.set_position(140, 60)
+            prevlocation = "null"
+        else:
+            mainPlayer.set_position(80, 110)
+    elif level == 1 and lvlmapy == 0 and lvlmapx == 1:
+        tiles.set_tilemap(tilemap("""
+            level1x1y0
+        """))
+        mainPlayer.set_position(20, 60)
+    elif level == 1 and lvlmapy == 0 and lvlmapx == -1:
         tiles.set_tilemap(tilemap("""
             level1x0y0
         """))
-        tiles.set_tilemap(tilemap("""
-            level10
-        """))
-        mainPlayer.set_position(80, 110)
+        mainPlayer.set_position(140, 60)
     else:
         pass
+prevlocation = ""
+textSprite: TextSprite = None
 lvlmapx = 0
 lvlmapy = 0
 mainPlayer: Sprite = None
@@ -77,10 +88,10 @@ level = 0
 setTiles()
 setSprites()
 level = 0
+# tests if player is at any dungeon edge
 
 def on_on_update():
-    global lvlmapy, lvlmapx
-    mainPlayer.say(lvlmapx)
+    global lvlmapy, lvlmapx, prevlocation
     if level == 1 and mainPlayer.bottom == 122:
         lvlmapy += -1
         levelMapCheck()
@@ -89,5 +100,9 @@ def on_on_update():
         levelMapCheck()
     if level == 1 and mainPlayer.right == 162:
         lvlmapx += 1
+        levelMapCheck()
+    if level == 1 and mainPlayer.left == -1:
+        prevlocation = "x"
+        lvlmapx += -1
         levelMapCheck()
 game.on_update(on_on_update)

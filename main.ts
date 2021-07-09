@@ -38,9 +38,10 @@ function setTiles () {
 scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileDarkGrass3, function (sprite, location) {
     level += 1
     setTiles()
-    pause(100)
-    game.splash("Level: " + ("" + level))
-    pause(500)
+    textSprite = textsprite.create("Level: " + ("" + level), 0, 15)
+    textSprite.setMaxFontHeight(10)
+    textSprite.setPosition(80, 55)
+    textSprite.destroy(effects.ashes, 2000)
 })
 function levelMapCheck () {
     if (level == 1 && lvlmapy == -1 && lvlmapx == 0) {
@@ -65,6 +66,7 @@ function levelMapCheck () {
     }
 }
 let prevlocation = ""
+let textSprite: TextSprite = null
 let lvlmapx = 0
 let lvlmapy = 0
 let mainPlayer: Sprite = null
