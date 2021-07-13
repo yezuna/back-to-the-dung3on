@@ -29,12 +29,15 @@ controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
 })
 function setSprites () {
     mainPlayer = sprites.create(assets.image`playerDown`, SpriteKind.Player)
+    info.setLife(3)
     mainPlayer.z = 1
     controller.moveSprite(mainPlayer)
     scene.cameraFollowSprite(mainPlayer)
     mainPlayer.setPosition(130, 200)
     mainPlayer.setStayInScreen(true)
     mainPlayer.say("" + prevlocation)
+    snake = sprites.create(assets.image`snake`, SpriteKind.Enemy)
+    snake.destroy()
 }
 controller.down.onEvent(ControllerButtonEvent.Released, function () {
     animation.stopAnimation(animation.AnimationTypes.All, mainPlayer)
@@ -114,8 +117,12 @@ scene.onOverlapTile(SpriteKind.Player, sprites.castle.tileDarkGrass3, function (
 })
 function levelMapCheck () {
     if (level == 1 && lvlmapy == -1 && lvlmapx == 0) {
+        scene.centerCameraAt(0, 0)
         tiles.setTilemap(tilemap`level1x0y-1`)
         spawnSide()
+        snake.follow(mainPlayer, 0)
+        snake.setFlag(SpriteFlag.Ghost, true)
+        snake.setFlag(SpriteFlag.Invisible, true)
     } else if (level == 1 && lvlmapy == 0 && lvlmapx == 0) {
         tiles.setTilemap(tilemap`level1x0y0`)
         spawnSide()
@@ -125,8 +132,28 @@ function levelMapCheck () {
     } else if (level == 1 && lvlmapy == -1 && lvlmapx == -1) {
         tiles.setTilemap(tilemap`level1x-1y-1`)
         spawnSide()
-    } else if (false) {
+    } else if (level == 1 && lvlmapy == -1 && lvlmapx == 1) {
+        tiles.setTilemap(tilemap`lvl1x1y-1`)
+        enemyCheck()
+        spawnSide()
+        scene.cameraFollowSprite(mainPlayer)
+    } else if (level == 1 && lvlmapy == -2 && lvlmapx == 0) {
+        tiles.setTilemap(tilemap`level1x0y-2`)
+        spawnSide()
+    } else {
     	
+    }
+}
+function enemyCheck () {
+    if (level == 1 && lvlmapy == -1 && lvlmapx == 1 && hadEnemy == 0) {
+        snake = sprites.create(assets.image`snake`, SpriteKind.Enemy)
+        snake.setPosition(158, 55)
+        snake.follow(mainPlayer, 50)
+        hadEnemy = 1
+    } else if (level == 1 && lvlmapy == -1 && lvlmapx == 1 && hadEnemy == 1) {
+        snake.setFlag(SpriteFlag.Ghost, false)
+        snake.setFlag(SpriteFlag.Invisible, false)
+        snake.follow(mainPlayer, 50)
     }
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
@@ -271,9 +298,16 @@ function spawnSide () {
         prevlocation = "null"
     }
 }
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
+    mainPlayer.say("ouch", 1000)
+    otherSprite.destroy()
+    info.changeLifeBy(-1)
+})
+let hadEnemy = 0
 let textSprite: TextSprite = null
 let lvlmapx = 0
 let lvlmapy = 0
+let snake: Sprite = null
 let prevlocation = ""
 let mainPlayer: Sprite = null
 let level = 0
@@ -295,7 +329,6 @@ game.onUpdate(function () {
     if (level == 1 && mainPlayer.right == 162) {
         prevlocation = "left"
         lvlmapx += 1
-        mainPlayer.say(lvlmapx, 500)
         levelMapCheck()
     }
     if (level == 1 && mainPlayer.left == -1) {
