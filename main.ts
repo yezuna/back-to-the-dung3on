@@ -117,6 +117,12 @@ function enemyCheck () {
         snake.setFlag(SpriteFlag.Ghost, false)
         snake.setFlag(SpriteFlag.Invisible, false)
         snake.follow(mainPlayer, 50)
+    } else if (level == 1 && lvlmapy == -1 && lvlmapx == 0 && hadEnemy == 0) {
+        snake.setFlag(SpriteFlag.Ghost, true)
+        snake.setFlag(SpriteFlag.Invisible, true)
+        snake.follow(mainPlayer, 0)
+    } else if (level == 1 && lvlmapy == -1 && lvlmapx == 0 && hadEnemy == 0) {
+    	
     }
 }
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
