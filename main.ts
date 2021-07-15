@@ -1053,6 +1053,9 @@ setTiles()
 setSprites()
 setAnim()
 level = 0
+timer.after(500, function () {
+    story.printDialog("move with 'WASD', attack with 'A'", 100, 100, 50, 150)
+})
 // tests if player is at any dungeon edge
 game.onUpdate(function () {
     if (level == 1 && mainPlayer.bottom == 122) {

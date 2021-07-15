@@ -9,7 +9,8 @@
         "corgio": "*",
         "arcade-text": "github:microsoft/arcade-text#v1.3.0",
         "Timers": "github:microsoft/arcade-timers#v1.1.0",
-        "animation": "*"
+        "animation": "*",
+        "arcade-story": "github:microsoft/arcade-storytelling#v1.0.1"
     },
     "files": [
         "main.blocks",
